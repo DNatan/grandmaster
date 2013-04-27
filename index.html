@@ -124,6 +124,11 @@
 								  //console.log(stringData);
 								  var pageNext = (stringData.split(",\"rel\":\"nofollow next\"")[0].split("\{\"href\":")[stringData.split(",\"rel\":\"nofollow next\"")[0].split("\{\"href\":").length-1]);
 								  
+								  statusText = statusText.concat("\n***Pulling threads from: \n" + currentURL + "***");
+								  var textarea = document.getElementById('status');
+                                  textarea.innerHTML = statusText;
+								  document.getElementById("status").scrollTop =    document.getElementById("status").scrollHeight
+								  
 								  currentURL = pageNext.split("\"")[1];
 								  
 								  for(var count = 0;count<stringListEin.length;count++){
@@ -150,10 +155,7 @@
 								 //console.log(currentURL + " " + yql_query);
 								 //console.log("******************************************");
 								 
-								 statusText = statusText.concat("\n***Pulling threads from: \n" + currentURL + "***");
-								 var textarea = document.getElementById('status');
-                                 textarea.innerHTML = statusText;
-								 document.getElementById("status").scrollTop =    document.getElementById("status").scrollHeight
+								 
 								 
 							      yql_query = "select * from html where url='" + currentURL +"'";  
 								  yql_query += " and compat='html5' and compat='html5'";  
