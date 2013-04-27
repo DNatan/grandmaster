@@ -165,15 +165,19 @@
 							  }else{
 							   
 							  //console.log(users);
+							  //{"---":{"tag":"test","link":"/r/SRSsucks/comments/111rsl/how_to_tag_all_srsers_through_reddit_enhancement/","color":"fuchsia","votes":0}}
+							 
 							  
-							  var prefix = "{\"tag\":\"" + tagLetters + "\",\"color\":\""
-								+ tagColour + "\"},\"";
-							  var suffix = "\":";
+							  var suffix = "\":{\"tag\":\"" + tagLetters + "\",\"color\":\""
+								+ tagColour + "\"}";
+							  var prefix = "\"";
 							  
 							  
 							  for(var count3 = 0;count3<users.length;count3++){
 							  
 							  stories+= prefix + users[count3] + suffix + " ";
+							  
+							  if(count3<users.length-1){stories+=",";}
 							  
 							  }
 							  
