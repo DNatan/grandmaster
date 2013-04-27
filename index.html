@@ -16,14 +16,42 @@
 	</script>
 </head>
 <body>
+<center>
 
-
-<input type="text" id="subreddit" value="AgainstAtheismPlus">
-<input type="text" id="pagesNumber" value="1">
-<input type="text" id="tag" value="AAPlus">
-<input type="text" id="colour" value="fuchsia">
+<input type="text" placeholder = "Subreddit Name" id="subreddit" />
+<input type="text" placeholder = "Number of Pages"id="pagesNumber" />
+<input type="text" placeholder = "TAG text" id="tag" />
+<input type="text" placeholder = "TAG color" id="colour"/>
 <button id='gen_list'>Generate List</button>
-<div id='result'><p></p></div>
+<br />
+
+
+<div id = "main">
+
+<textarea id="status"  readonly="readonly" rows = "4" cols =  "60" style="background-image: url('statusBG.png'); background-repeat:no-repeat; color:white; background-color:#57737E"> ***STATUS*** </textarea>
+<br />
+<div>
+<textarea placeholder = "Paste old TAGS here" id="oldTags" rows = "10" cols =  "60" style="background-image: url('oldTagsBG.png'); background-repeat:no-repeat"></textarea>
+</div>
+<div>
+<textarea placeholder = "Results include your old TAGS" id="output" rows = "10" cols =  "60" style="background-image: url('newTagsBG.png'); background-repeat:no-repeat"></textarea>
+</div>
+<div>
+<textarea readonly="readonly" id="instructions" rows = "9" cols =  "60">
+***INSTRUCTIONS***
+- Install RES: http://redditenhancementsuite.com/
+- Go into a reddit tab and press the period on your keyboard.
+- Enter: RESStorage update RESmodules.userTagger.tags 
+- Copy the whole text and paste it above 
+- Fill in the required fields above and press Generate List
+- Wait for the Results to appear
+- Paste the results back into the RES TAGS window
+</textarea>
+</div>
+<br />
+</div>
+</center>
+
 <script src="http://yui.yahooapis.com/3.8.0/build/yui/yui-min.js"></script>
 
 </body>
@@ -39,9 +67,13 @@
 	var yql_query;
 	var links = new Array();
 	var users = new Array();
+	var usersOld = new Array();
 	var phaseTwo = false;
 	var countURL = 0;
 	var pagesNum = 1;
+	var statusText = "***STATUS***";
+	var maxPages;
+	var oldTagsText;
 	 
 
   YUI().use('node', 'event', 'yql', function(Y) {  
@@ -54,7 +86,17 @@
 						countURL = 0;
 						links = new Array();
 						users = new Array();
+						statusText = "***STATUS***";
+						oldTagsText = document.getElementById('oldTags').value;
 						
+						//console.log(oldTagsText);
+						
+						var splitOne = oldTagsText.split("\":{\"");
+						for(var countTags = 0;countTags<splitOne.length;countTags++){
+						    var tempUser = splitOne[countTags].split("\"")[splitOne[countTags].split("\"").length-1];
+							usersOld.push(tempUser);
+							//console.log(tempUser);
+						}
 						
 			            pagesNum = document.getElementById("pagesNumber").value;
 						tagLetters = document.getElementById("tag").value;
@@ -65,7 +107,8 @@
 						yql_query += " and compat='html5' and compat='html5'";  
 						
 							var q = Y.YQL(yql_query, function(response) {  
-							var stories = "<div id = 'result'><p>";
+							//var stories = "<textarea placeholder = \"Results\" id=\"output\" rows = \"10\" cols =  \"60\">";
+							var stories = "<textarea placeholder = \"Results include your old TAGS\" id=\"output\" rows = \"10\" cols =  \"60\" style=\"background-image: url('newTagsBG.png'); background-repeat:no-repeat\">";
 							  allowCache: false;
 							  if(response.query.results){  
 								  
@@ -74,7 +117,7 @@
 								  var stringData = JSON.stringify(response.query.results);
 								  var stringListEin = new Array();
 								  URL = stringData.split("new/")[0].split("\"")[stringData.split("new/")[0].split("\"").length-1];
-								  console.log(URL);
+								  //console.log(URL);
 								  
 								  stringListEin = stringData.split(URL + "comments/");
 								  var stringListZvei = new Array();
@@ -103,9 +146,14 @@
 								  
 								  }
                                   
-								 console.log("******************************************");
-								 console.log(currentURL + " " + yql_query);
-								 console.log("******************************************");
+								 //console.log("******************************************");
+								 //console.log(currentURL + " " + yql_query);
+								 //console.log("******************************************");
+								 
+								 statusText = statusText.concat("\n***Pulling threads from: \n" + currentURL + "***");
+								 var textarea = document.getElementById('status');
+                                 textarea.innerHTML = statusText;
+								 document.getElementById("status").scrollTop =    document.getElementById("status").scrollHeight
 								 
 							      yql_query = "select * from html where url='" + currentURL +"'";  
 								  yql_query += " and compat='html5' and compat='html5'";  
@@ -116,10 +164,11 @@
 								  //console.log(q._params.q);
 								  
 								  if(pagesNum>1){pagesNum--;}else{phaseTwo = true;
-								  
+								  maxPages = links.length;
 								  for(var j2=0; j2<links.length;j2++){
 								  
-								  console.log(j2 + " " + links[j2]);
+								 
+								  //console.log(j2 + " " + links[j2]);
 								  //stories+= j2 + " " + links[j2] + "<br />";
 								  
 								  }
@@ -129,13 +178,19 @@
 							  } 
 							  
 							  if(phaseTwo){
-							   console.log(links.length);
+							   //console.log(links.length);
 							  if(countURL<links.length){
 							      yql_query = "select * from html where url='" + links[countURL] +"'";  
 								  yql_query += " and compat='html5' and compat='html5'";  
 								  q._params.q = yql_query;
 								  
-								  console.log(countURL + " " + yql_query);
+								  //console.log(countURL + " " + yql_query);
+								  
+								 statusText = statusText.concat("\n***Getting users from thread : " + (countURL+1) + " of " + maxPages + "***");
+								 var textarea = document.getElementById('status');
+                                 textarea.innerHTML = statusText;
+								 document.getElementById("status").scrollTop =    document.getElementById("status").scrollHeight
+								 
 							      countURL++; 
 								  
 								  var stringData2 = JSON.stringify(response.query.results);
@@ -150,6 +205,15 @@
 													   for(var count2 = 0;count2<users.length;count2++){
 													  
 														 if(users[count2] == (stringListEin2[count].split("\"")[0])){
+														  hasIt = true;break;
+													  
+														 }
+													  
+													   }
+													   
+													   for(var count3 = 0;count3<usersOld.length;count3++){
+													  
+														 if(usersOld[count3] == (stringListEin2[count].split("\"")[0])){
 														  hasIt = true;break;
 													  
 														 }
@@ -172,7 +236,11 @@
 								+ tagColour + "\"}";
 							  var prefix = "\"";
 							  
-							  
+							  if(oldTagsText.length>0){
+							  stories += oldTagsText.substring(0, oldTagsText.length - 1) + ",";
+							  }else{
+							  stories+="{";
+							  }
 							  for(var count3 = 0;count3<users.length;count3++){
 							  
 							  stories+= prefix + users[count3] + suffix + " ";
@@ -181,8 +249,10 @@
 							  
 							  }
 							  
-							  stories += "</p></div>";  
-							  Y.one('#result').replace(stories);  
+							  stories +="}";
+							  
+							  stories += "</textarea>";  
+							  Y.one('#output').replace(stories);  
 							  stories = "";  
 							  
 							  handel.cancel();
