@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 
-
 <html xmlns=="gttp://www.w3.org/1999/xhtml" xml:lang="en" lang = "en">
 <head>
+
+	//Created by Reddit.com user DavidNatan
+	// on 4/28/2013. This tool is currently
+	// in BETA.
+
 	<meta http=equiv="Content-Type" content="text/html" charset="utf-8" />
-	<title>Mass Tagger</title>
+	<title>Mass RES Tagger</title>
 	
 	<script src="http://yui.yahooapis.com/3.8.0/build/yui/yui-min.js"></script>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js">
@@ -15,7 +19,7 @@
 	
 	</script>
 </head>
-<body>
+<body >
 <center>
 
 <input type="text" placeholder = "Subreddit Name" id="subreddit" />
@@ -37,19 +41,22 @@
 <textarea placeholder = "Results include your old TAGS" id="output" rows = "10" cols =  "60" style="background-image: url('newTagsBG.png'); background-repeat:no-repeat"></textarea>
 </div>
 <div>
-<textarea readonly="readonly" id="instructions" rows = "9" cols =  "60">
+<textarea readonly="readonly" id="instructions" rows = "10" cols =  "60">
 ***INSTRUCTIONS***
 - Install RES: http://redditenhancementsuite.com/
-- Go into a reddit tab and press the period on your keyboard.
+- Go into a reddit tab and press the period on your keyboard
 - Enter: RESStorage update RESmodules.userTagger.tags 
 - Copy the whole text and paste it in the old TAGS field 
 - Fill in the required fields above and press Generate List
 - Wait for the Results to appear
 - Paste the results back into the RES TAGS window
+- Or paste them in the old Tags field and go again
 </textarea>
 </div>
+<p> Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BETA.</p>
 <br />
 </div>
+
 </center>
 
 <script src="http://yui.yahooapis.com/3.8.0/build/yui/yui-min.js"></script>
@@ -58,6 +65,46 @@
 
 <script language="javascript">
 
+
+    //get info about link
+	
+	//var query_string = {};
+    //var query = window.location.search.substring(1);
+    //var vars = query.split("&");
+	//console.log(vars);
+	// user u/o
+	// user u
+		// list of subreddits li = mensrights$shitredditsays&
+	// user o
+		// subName subPages subTAG subColor
+		
+	//var user; 	
+	//var host = false;
+	//var listInterest;
+	//var listData;
+	//if(vars[0].split("=")[0]=="u"){user = vars[0].split("=")[1];console.log(user);}	
+	//if(vars[1].split("=")[1]=="true"){host = vars[1].split("=")[1];console.log(host);}	
+	//if(host){
+	//listInterest = vars[2].split("$");
+	//console.log(listInterest);
+	//}
+	//if(!host){
+	//listData = vars[2].split("$");
+	//console.log(listData);
+	//}
+	
+	//apply data if any
+	
+	//if(listData.length>0){
+	//		document.getElementById("subreddit").value = listData[0];
+	//		document.getElementById("pagesNumber").value = listData[1];
+	//		document.getElementById("tag").value = listData[2];			
+	//		document.getElementById("colour").value = listData[3];
+	//}
+		
+  
+    //if a user followed someone elses link parse data into search query
+	//if they followed their own link include field with their subreddits of interest
   
     var URL = "http://www.reddit.com/r/" + document.getElementById("subreddit").value + "/";
 	var tagLetters = "SRS";
@@ -74,12 +121,15 @@
 	var statusText = "***STATUS***";
 	var maxPages;
 	var oldTagsText;
+	var myURL = "http://dnatan.github.io/grandmaster/";
+	var linkData = "/r/masstagger";
+	//"link":"/r/talesfromtechsupport/comments/1d89ku/enter_mouse_button/",
 	 
 
   YUI().use('node', 'event', 'yql', function(Y) {  
   
 		Y.one("#gen_list").on('click',function() { 
-
+		
 		                URL = "http://www.reddit.com/r/" + document.getElementById("subreddit").value + "/";
 		                currentURL = URL;
 						phaseTwo = false;
@@ -234,7 +284,7 @@
 							  //{"---":{"tag":"test","link":"/r/SRSsucks/comments/111rsl/how_to_tag_all_srsers_through_reddit_enhancement/","color":"fuchsia","votes":0}}
 							 
 							  
-							  var suffix = "\":{\"tag\":\"" + tagLetters + "\",\"color\":\""
+							  var suffix = "\":{\"tag\":\"" + tagLetters + "\", \"link\":\"" + linkData + "\",\"color\":\""
 								+ tagColour + "\"}";
 							  var prefix = "\"";
 							  
