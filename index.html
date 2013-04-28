@@ -25,7 +25,29 @@
 <input type="text" placeholder = "Subreddit Name" id="subreddit" />
 <input type="text" placeholder = "Number of Pages"id="pagesNumber" />
 <input type="text" placeholder = "TAG text" id="tag" />
-<input type="text" placeholder = "TAG color" id="colour"/>
+
+<select id = "myList">
+
+<option value = "none" id = "colour">none</option>
+               <option name = "c1" value = "aqua">aqua</option>
+               <option name = "c1" value = "black">black</option>
+               <option name = "c1" value = "blue">blue</option>
+			   <option name = "c1" value = "fuchsia">fuchsia</option>
+			   <option name = "c1" value = "grey">grey</option>
+			   <option name = "c1" value = "green">green</option>
+			   <option name = "c1" value = "lime">lime</option>
+			   <option name = "c1" value = "maroon">maroon</option>
+			   <option name = "c1" value = "navy">navy</option>
+			   <option name = "c1" value = "olive">olive</option>
+			   <option name = "c1" value = "orange">orange</option>
+			   <option name = "c1" value = "purple">purple</option>
+			   <option name = "c1" value = "red">red</option>
+			   <option name = "c1" value = "silver">silver</option>
+			   <option name = "c1" value = "teal">teal</option>
+			   <option name = "c1" value = "white">white</option>
+			   <option name = "c1" value = "yellow">yellow</option>
+</select>
+
 <button id='gen_list'>Generate List</button>
 <br />
 
@@ -107,8 +129,8 @@
 	//if they followed their own link include field with their subreddits of interest
   
     var URL = "http://www.reddit.com/r/" + document.getElementById("subreddit").value + "/";
-	var tagLetters = "SRS";
-	var tagColour = "fuchsia";
+	var tagLetters = "";
+	var tagColour = "none";
 	
 	var currentURL = URL;
 	var yql_query;
@@ -150,7 +172,14 @@
 						
 			            pagesNum = document.getElementById("pagesNumber").value;
 						tagLetters = document.getElementById("tag").value;
-						tagColour = document.getElementById("colour").value;
+						
+						var e = document.getElementsByName('c1');
+                       
+					    for(var c5 = 0;c5<e.length;c5++){
+						if(e[c5].selected == true){tagColour = e[c5].value;}}
+						
+						
+						//tagColour = document.getElementById("colour").options[document.getElementById("colour").selectedIndex].value;
 						
 						  
 						yql_query = "select * from html where url='" + currentURL +"'";  
@@ -281,7 +310,7 @@
 							  }else{
 							   
 							  //console.log(users);
-							  //{"---":{"tag":"test","link":"/r/SRSsucks/comments/111rsl/how_to_tag_all_srsers_through_reddit_enhancement/","color":"fuchsia","votes":0}}
+							  
 							 
 							  
 							  var suffix = "\":{\"tag\":\"" + tagLetters + "\", \"link\":\"" + linkData + "\",\"color\":\""
