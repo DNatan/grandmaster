@@ -146,12 +146,15 @@
 	var oldTagsText;
 	var myURL = "http://dnatan.github.io/grandmaster/";
 	var linkData = "/r/masstagger";
+	var hasUsers = false;
 	//"link":"/r/talesfromtechsupport/comments/1d89ku/enter_mouse_button/",
 	 
 
   YUI().use('node', 'event', 'yql', function(Y) {  
   
 		Y.one("#gen_list").on('click',function() { 
+		
+						hasUsers = false;
 		
 		                URL = "http://www.reddit.com/r/" + document.getElementById("subreddit").value + "/";
 		                currentURL = URL;
@@ -191,6 +194,8 @@
 							var stories = "<textarea placeholder = \"Results include your old TAGS\" id=\"output\" rows = \"10\" cols =  \"60\" style=\"background-image: url('newTagsBG.png'); background-repeat:no-repeat\">";
 							  allowCache: false;
 							  if(response.query.results){  
+								  
+								  //console.log(response.query.results);
 								  
 								  if(!phaseTwo){
 								  
@@ -281,11 +286,13 @@
 								  var stringListZvei2 = new Array();
 								  
 								  for(var count = 0;count<stringListEin2.length;count++){
-								  
+								              //console.log(stringListEin2[count] + "\n\n\n");
 											  var hasIt = false;
 											  
 													   for(var count2 = 0;count2<users.length;count2++){
-													  
+													     
+														 
+													     
 														 if(users[count2] == (stringListEin2[count].split("\"")[0])){
 														  hasIt = true;break;
 													  
@@ -304,6 +311,8 @@
 											  
 												   if(!hasIt){
 												   users.push(stringListEin2[count].split("\"")[0]);
+												   hasUsers = true;
+												   
 												   //console.log(users[users.length-1]);
 												   }
 								   }
@@ -336,6 +345,14 @@
 							  stories += "</textarea>";  
 							  Y.one('#output').replace(stories);  
 							  stories = "";  
+							  
+							  if (!hasUsers){
+							  
+							  stories = "<textarea placeholder = \"Results include your old TAGS\" id=\"output\" rows = \"10\" cols =  \"60\" style=\"background-image: url('newTagsBG.png'); background-repeat:no-repeat\">"+ "Unfortunately the Subreddit you're attempting to search is either Private or behind a \"You must be 18 or over to view this content.\" wall. We're working on resolving this issue."+"</textarea>";  
+							  Y.one('#output').replace(stories);  
+							  stories = "";
+							  
+							  }
 							  
 							  handel.cancel();
 							  
