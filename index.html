@@ -21,7 +21,7 @@
 	
 	}
 	
-	var update = "***Update Notes Beta ver:001_5/1/2013***\n\n***For General Instructions scroll to the bottom of the page or click to hide this window and come back to it later***\n\nFrom the Advanced tab you can now set a minimum ammount of karma a user must have in that search to be tagged.\n\n***Permanent Search History!***\n\nFrom this version the first search you perform will add a Special TAG to your output. The Special TAG holds information about your past searches and will bring up a full list of Search TAGs above the Status field.\n\nClick one of them to load all the information for that Search so you can quickly update all of your TAG lists. If you change a search variable afterwards the TAG will also change accordingly. In order for the Search TAGs to appear and update you must move your Results field to your Old Tags field. \n\nA small reminder button will appear after each search so you can move the RESULTS to the OLD TAGS field with one click.\n\nThe Special TAG will be stored in your output while it won't interfere with RES in any way. As always copy and paste the entire output field into RES when you're done with however many subreddits you'd like to search.";
+	var update = "***Update Notes Beta ver:001_5/1/2013***\n\n***For General Instructions scroll to the bottom of the page or click to hide this window and come back to it later***\n\nFrom the Advanced tab you can now set a minimum ammount of karma a user must have in that search to be tagged. This option is still pretty inacurate but a value of 10 should work fine.\n\n***Permanent Search History!***\n\nFrom this version the first search you perform will add a Special TAG to your output. The Special TAG holds information about your past searches and will bring up a full list of Search TAGs above the Status field.\n\nClick one of them to load all the information for that Search so you can quickly update all of your TAG lists. If you change a search variable afterwards the TAG will also change accordingly. In order for the Search TAGs to appear and update you must move your Results field to your Old Tags field. \n\nA small reminder button will appear after each search so you can move the RESULTS to the OLD TAGS field with one click.\n\nThe Special TAG will be stored in your output while it won't interfere with RES in any way. As always copy and paste the entire output field into RES when you're done with however many subreddits you'd like to search.";
 	
 	</script>
 </head>
@@ -140,47 +140,7 @@ Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BE
 	
 	
 	}
-
-
-    //get info about link
-	
-	//var query_string = {};
-    //var query = window.location.search.substring(1);
-    //var vars = query.split("&");
-	//console.log(vars);
-	// user u/o
-	// user u
-		// list of subreddits li = 
-	// user o
-		// subName subPages subTAG subColor
 		
-	//var user; 	
-	//var host = false;
-	//var listInterest;
-	//var listData;
-	//if(vars[0].split("=")[0]=="u"){user = vars[0].split("=")[1];console.log(user);}	
-	//if(vars[1].split("=")[1]=="true"){host = vars[1].split("=")[1];console.log(host);}	
-	//if(host){
-	//listInterest = vars[2].split("$");
-	//console.log(listInterest);
-	//}
-	//if(!host){
-	//listData = vars[2].split("$");
-	//console.log(listData);
-	//}
-	
-	//apply data if any
-	
-	//if(listData.length>0){
-	//		document.getElementById("subreddit").value = listData[0];
-	//		document.getElementById("pagesNumber").value = listData[1];
-	//		document.getElementById("tag").value = listData[2];			
-	//		document.getElementById("colour").value = listData[3];
-	//}
-		
-  
-    //if a user followed someone elses link parse data into search query
-	//if they followed their own link include field with their subreddits of interest
   
     var URL = "http://www.reddit.com/r/" + document.getElementById("subreddit").value + "/";
 	var tagLetters = "";
@@ -229,10 +189,6 @@ Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BE
 	}
 	
 	function getSpecialTag(text){
-	
-	// &s delimit searches $ delimits values
-	
-	//test tag {{"MRTHIST":{"tag":"MRTHIST", "link":"/r/masstagger/mensrights$5$MRA$green&adviceanimals$5$AAnimals$blue","color":"red"}}
 	
 	try{
 						var histText = "";
@@ -287,20 +243,17 @@ Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BE
 						histText = histText.concat("<textarea onfocus=\'loadSearch(this.id)\' title = \"Click the TAG to load its info into the search options. A tick mark next to a TAG means you've already searched for it during this session. Special TAGs just like this one are saved in your output with all of your searches and will appear whenever you load your old Tags in the correct field.\"id=\""+ countS2 +"\" readonly=\"readonly\" style=\"overflow:hidden; resize: none;color:" + getColor(searchList[countS2][3]) +";text-align:center; background-color:"+ searchList[countS2][3]+";border-radius: 5px\" rows = \"1\" cols =  \""+searchList[countS2][2].length+"\">"+ searchList[countS2][2] + tick + "</textarea>" );
 						}
 						
-						//console.log(histText);
 						
 						if(histText.length>0){document.getElementById('histDiv').style.display = "block"}else{document.getElementById('histDiv').style.display = "none"}
 						var textarea2 = document.getElementById('histDiv');
                         textarea2.innerHTML = histText;
-						//document.getElementById("history").scrollTop = document.getElementById("history").scrollHeight-2;
+						
 						
 						
 		}catch(err){}
 	}
 	
 	function getColor(color){
-	
-	//console.log(color);
 	
 	if(color == "white"||color == "none"||color == "undefined"){return "black";}else{return "silver";}
 	
@@ -345,7 +298,6 @@ Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BE
 
 				if(!hasOldTag){
 				
-				//test tag {"MRTHIST":{"tag":"MRTHIST", "link":"/r/masstagger/mensrights$5$MRA$green&adviceanimals$5$AAnimals$blue","color":"red"}}
 				var pagesNum = document.getElementById("pagesNumber").value;
 				var tagLetters = document.getElementById("tag").value;
 				var subName = document.getElementById("subreddit").value;
@@ -383,12 +335,10 @@ Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BE
 							
 							var tempFirst = tempFirstSecond[0];
 							var tempSecond = tempFirstSecond[1].substring(tempFirstSecond[1].split("&")[0].length, tempFirstSecond[1].length);
-							//console.log("tempSecond");
-							//console.log(tempSecond);
-							//console.log(tempFirst + subName + "$" + pagesNum + "$" + tagLetters + "$" + tagColour + tempSecond);
+							
 							
 							return tempFirst + "&" + subName + "$" + pagesNum + "$" + tagLetters + "$" + tagColour + tempSecond;
-							// take the first part the new tag and the second part }
+							
 							}
 							}
 							
@@ -471,10 +421,6 @@ Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BE
 					    for(var c5 = 0;c5<e.length;c5++){
 						if(e[c5].selected == true){tagColour = e[c5].value;}}
 						
-						
-						//tagColour = document.getElementById("colour").options[document.getElementById("colour").selectedIndex].value;
-						
-						  
 						yql_query = "select * from html where url='" + currentURL +"'";  
 						yql_query += " and compat='html5' and compat='html5'";  
 						
@@ -525,12 +471,6 @@ Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BE
 								  
 								  }
                                   
-								 //console.log("******************************************");
-								 //console.log(currentURL + " " + yql_query);
-								 //console.log("******************************************");
-								 
-								 
-								 
 							      yql_query = "select * from html where url='" + currentURL +"'";  
 								  yql_query += " and compat='html5' and compat='html5'";  
 								  q._params.q = yql_query;
