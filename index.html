@@ -276,7 +276,7 @@ Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BE
 	
 			                
 	
-	      try{
+	      //try{
 				var oldTagsText = "";
 				var hasOldTag = false;
 				var searches = "";
@@ -336,6 +336,8 @@ Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BE
 							var tempFirst = tempFirstSecond[0];
 							var tempSecond = tempFirstSecond[1].substring(tempFirstSecond[1].split("&")[0].length, tempFirstSecond[1].length);
 							
+							console.log(tempFirst);
+							console.log(tempSecond);
 							
 							return tempFirst + "&" + subName + "$" + pagesNum + "$" + tagLetters + "$" + tagColour + tempSecond;
 							
@@ -357,22 +359,22 @@ Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BE
 			    //console.log(newTagShort);
 				
 				var beforeTagIchi = "{\"" + specialName + "\":{\"tag\":\"" + specialName +"\", \"link\":\"/r/masstagger/";
-				
+				console.log(beforeTagIchi);
 				var beforeTagNi = beforeTagIchi.concat(text.split(beforeTagIchi)[1].split("\"")[0]) + newTagShort;
 				
 				
 				var textRest = beforeTagNi + text.split(beforeTagIchi.concat(text.split(beforeTagIchi)[1].split("\"")[0]) + "\",\"color\":\"red\"},");
-				//console.log(textRest);
+				console.log(textRest);
 				return (textRest);
 				
 				}
 				
 				
 
-			}catch(err){
-			
-			return text;
-			}		
+			//}catch(err){
+			//console.log("Error in tag generation.")
+			//return text;
+			//}		
 	
 	
 	
@@ -647,7 +649,7 @@ Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BE
 									  if(includeUser){
 									  stories+= prefix + users[count3] + suffix + " ";
 									  allExcluded = false;
-									  if(count3<users.length-1){stories+=",";}
+									  if(count3<users.length){stories+=",";}
 									  }else{
 									  //console.log("User " + users[count3] + " was excluded for insufficient karma.")
 									  }
@@ -661,7 +663,7 @@ Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BE
 									  
 									  var hasInput = true;
 									  
-									  if (!hasUsers&&oldTagsText.length == 0){
+									  if (!hasUsers){
 									  
 									  stories = "<textarea placeholder = \"Results include your old TAGS\" id=\"output\" rows = \"10\" cols =  \"60\" style=\"background-image: url('newTagsBG.png'); background-repeat:no-repeat\">"+ "No new users found.\n\nPlease check if you haven't misspelled the Subreddit Name. \n\nExample: for reddit.com/r/adviceanimals enter adviceanimals \n\nAlternatively the Subreddit you're attempting to search might be Private or behind a \"You must be 18 or over to view this content.\" wall. We're working on resolving this issue."+"</textarea>";  
 									  Y.one('#output').replace(stories);  
