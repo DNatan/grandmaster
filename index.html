@@ -307,7 +307,7 @@ Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BE
                 for(var c5 = 0;c5<e.length;c5++){
 				if(e[c5].selected == true){tagColour = e[c5].value;}}
 				
-				var newTag = "{\"" + specialName + "\":{\"tag\":\"" + specialName +"\", \"link\":\"/r/masstagger/&" + subName + "$" + pagesNum + "$" + tagLetters + "$" + tagColour + "&\",\"color\":\"red\"},";
+				var newTag = "{\"" + specialName + "\":{\"tag\":\"" + specialName +"\",\"link\":\"/r/masstagger/&" + subName + "$" + pagesNum + "$" + tagLetters + "$" + tagColour + "&\",\"color\":\"red\"},";
 				
 				oldTagsText = newTag + oldTagsText.substring(1, oldTagsText.length);
 				return oldTagsText;
@@ -336,8 +336,8 @@ Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BE
 							var tempFirst = tempFirstSecond[0];
 							var tempSecond = tempFirstSecond[1].substring(tempFirstSecond[1].split("&")[0].length, tempFirstSecond[1].length);
 							
-							console.log(tempFirst);
-							console.log(tempSecond);
+							//console.log(tempFirst);
+							//console.log(tempSecond);
 							
 							return tempFirst + "&" + subName + "$" + pagesNum + "$" + tagLetters + "$" + tagColour + tempSecond;
 							
@@ -358,13 +358,13 @@ Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BE
 				var newTagShort = subName + "$" + pagesNum + "$" + tagLetters + "$" + tagColour + "&\",\"color\":\"red\"}";
 			    //console.log(newTagShort);
 				
-				var beforeTagIchi = "{\"" + specialName + "\":{\"tag\":\"" + specialName +"\", \"link\":\"/r/masstagger/";
-				console.log(beforeTagIchi);
+				var beforeTagIchi = "\"" + specialName + "\":{\"tag\":\"" + specialName +"\",\"link\":\"/r/masstagger/";
+				//console.log(beforeTagIchi);
 				var beforeTagNi = beforeTagIchi.concat(text.split(beforeTagIchi)[1].split("\"")[0]) + newTagShort;
 				
 				
-				var textRest = beforeTagNi + text.split(beforeTagIchi.concat(text.split(beforeTagIchi)[1].split("\"")[0]) + "\",\"color\":\"red\"},");
-				console.log(textRest);
+				var textRest = text.split(beforeTagIchi)[0] + beforeTagNi + text.split(beforeTagIchi.concat(text.split(beforeTagIchi)[1].split("\"")[0]) + "\",\"color\":\"red\"}")[1];
+				//console.log(textRest);
 				return (textRest);
 				
 				}
@@ -623,7 +623,7 @@ Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BE
 									  
 									  }else{
 									  
-									  var newTag = "{\"" + specialName + "\":{\"tag\":\"" + specialName +"\", \"link\":\"/r/masstagger/&" + subName + "$" + pagesNum + "$" + tagLetters + "$" + tagColour + "&\",\"color\":\"red\"},";
+									  var newTag = "{\"" + specialName + "\":{\"tag\":\"" + specialName +"\",\"link\":\"/r/masstagger/&" + subName + "$" + pagesNum + "$" + tagLetters + "$" + tagColour + "&\",\"color\":\"red\"},";
 									  
 									  stories+= newTag;
 									  }
@@ -649,7 +649,7 @@ Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BE
 									  if(includeUser){
 									  stories+= prefix + users[count3] + suffix + " ";
 									  allExcluded = false;
-									  if(count3<users.length){stories+=",";}
+									  if(count3<users.length-1){stories+=",";}
 									  }else{
 									  //console.log("User " + users[count3] + " was excluded for insufficient karma.")
 									  }
