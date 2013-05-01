@@ -13,9 +13,15 @@
 	<script src="http://yui.yahooapis.com/3.8.0/build/yui/yui-min.js"></script>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js">
 	
+	</script>
+	<script type="text/javascript">
+	function user(name,karma){
+	this.name = name;
+	this.karma = karma;
 	
+	}
 	
-	
+	var update = "***Update Notes Beta ver:001_5/1/2013***\n\n***For General Instructions scroll to the bottom of the page or click to hide this window and come back to it later***\n\nFrom the Advanced tab you can now set a minimum ammount of karma a user must have in that search to be tagged.\n\n***Permanent Search History!***\n\nFrom this version the first search you perform will add a Special TAG to your output. The Special TAG holds information about your past searches and will bring up a full list of Search TAGs above the Status field.\n\nClick one of them to load all the information for that Search so you can quickly update all of your TAG lists. If you change a search variable afterwards the TAG will also change accordingly. In order for the Search TAGs to appear and update you must move your Results field to your Old Tags field. \n\nA small reminder button will appear after each search so you can move the RESULTS to the OLD TAGS field with one click.\n\nThe Special TAG will be stored in your output while it won't interfere with RES in any way. As always copy and paste the entire output field into RES when you're done with however many subreddits you'd like to search.";
 	
 	</script>
 </head>
@@ -23,6 +29,7 @@
 <center>
 
 <div>
+<a href="javascript:addAdvanced()" style ="text-decoration: none" title = "Advanced Options">advanced </a>
 <input type="text" placeholder = "Subreddit Name Only" id="subreddit" />
 <input type="text" placeholder = "Number of Pages"id="pagesNumber" />
 <input type="text" placeholder = "TAG text" id="tag" />
@@ -51,33 +58,61 @@
 
 <button id='gen_list'>Generate List</button>
 </div>
+</center>
+<center>
+<div id="advanced" style="display:none">
 
+<input type="text" placeholder = "Minimum Karma" id="minKarma" />
 
+</div>
 
 <div id = "main">
 
-<textarea id="status"  readonly="readonly" rows = "4" cols =  "60" style="background-image: url('statusBG.png'); background-repeat:no-repeat; color:white; background-color:#57737E"> ***STATUS*** </textarea>
-<div>
-<textarea placeholder = "Paste old TAGS here" id="oldTags" rows = "10" cols =  "60" style="background-image: url('oldTagsBG.png'); background-repeat:no-repeat"></textarea>
+<div id = "infoDiv" "display:block">
+<a href="javascript:document.getElementById('infoDiv').style.display = 'none';javascript:document.getElementById('infoUrl').style.display = 'block'" style ="text-decoration: none" title = "Hide Update Info">click to hide update notes</a>
+<div><textarea id="versionInfo" readonly="readonly" rows = "15" cols =  "80" placeholder = "Enter your current tags into the Old Tags field to get a list of past searches."></textarea></div>
+
+<script type="text/javascript">
+document.getElementById('versionInfo').value = update;
+</script>
 </div>
+<div id = "histDiv" style = "display:none; width:800px">
+</div>
+
+
+
+
+
+<textarea id="status"  readonly="readonly" rows = "4" cols =  "60" style="background-image: url('statusBG.png');overflow:hidden; background-repeat:no-repeat; color:white; background-color:#57737E"> ***STATUS*** </textarea>
+
+<div>
+<textarea placeholder = "Paste old TAGS here" id="oldTags" value = "" rows = "10" cols =  "60" style="background-image: url('oldTagsBG.png'); background-repeat:no-repeat"></textarea>
+</div>
+
+<div id="notification" style = "display:none">
+<textarea id="notArea" focus = "false" readonly="readonly" onfocus='copyResults()' rows = "1" cols =  "60" placeholder = "" style = "overflow:hidden; resize: none; color:white; background-color:orange">    Click Here to copy the Results in the Old Tags field.</textarea>
+</div>
+
 <div>
 <textarea placeholder = "Results include your old TAGS" id="output" rows = "10" cols =  "60" style="background-image: url('newTagsBG.png'); background-repeat:no-repeat"></textarea>
 </div>
 <div>
-<textarea readonly="readonly" id="instructions" rows = "10" cols =  "60">
+<textarea readonly="readonly" style="overflow:hidden;" id="instructions" rows = "8" cols =  "60">
 ***INSTRUCTIONS***
 - Install RES: http://redditenhancementsuite.com/
 - Go into a reddit tab and press the period on your keyboard
 - Enter: RESStorage update RESmodules.userTagger.tags 
 - Copy the whole text and paste it in the old TAGS field 
 - Fill in the required fields above and press Generate List
-- Wait for the Results to appear
 - Paste the results back into the RES TAGS window
 - Or paste them in the old Tags field and go again
 </textarea>
 </div>
-<p> Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BETA.
-<a href="http://www.reddit.com/r/masstagger/">For News and Updates: www.reddit.com/r/masstagger/</a></p>
+
+<a id ="infoUrl" href="javascript:document.getElementById('infoDiv').style.display = 'block';javascript:document.getElementById('infoUrl').style.display = 'block'" style ="text-decoration: none" title = "Hide Update Info">Update Notes ver:001</a>
+
+Created by Reddit.com user DavidNatan on 4/28/2013. This tool is currently in BETA. For News and Updates: 
+<a href="http://www.reddit.com/r/masstagger/" style ="text-decoration: none">www.reddit.com/r/masstagger/</a>
 </div>
 
 </center>
@@ -87,6 +122,24 @@
 </body>
 
 <script language="javascript">
+
+	$('#oldTags').bind('input propertychange', function() {
+
+		  getSpecialTag(document.getElementById('oldTags').value);
+	});
+	
+	
+
+	function addAdvanced(){
+	if(document.getElementById('advanced').style.display == "none"){
+	document.getElementById('advanced').style.display = "block";
+	}else{
+	document.getElementById('advanced').style.display ="none";
+	document.getElementById('minKarma').value = "";
+	}
+	
+	
+	}
 
 
     //get info about link
@@ -137,6 +190,7 @@
 	var yql_query;
 	var links = new Array();
 	var users = new Array();
+	var usersObj = new Array();
 	var usersOld = new Array();
 	var phaseTwo = false;
 	var countURL = 0;
@@ -147,16 +201,244 @@
 	var myURL = "http://dnatan.github.io/grandmaster/";
 	var linkData = "/r/masstagger";
 	var hasUsers = false;
+	var minKarma = 0;
+	var excludeScore = false;
+	var specialName = "MRTHIST";
+	var searchList = new Array();
+	var subName;
+	var executed = false;
+	var currentURL = myURL + "?";
+	var searchedNow = new Array();
 	
-	 
+	
+	
+	function copyResults(){
+	
+	
+	document.getElementById('oldTags').value = document.getElementById('output').value;
+
+	
+
+	
+	
+	document.getElementById('notification').style.display = "none";
+	document.getElementById('notification').focus = "false";	
+	getSpecialTag(document.getElementById('oldTags').value);
+                                  
+	
+	}
+	
+	function getSpecialTag(text){
+	
+	// &s delimit searches $ delimits values
+	
+	//test tag {{"MRTHIST":{"tag":"MRTHIST", "link":"/r/masstagger/mensrights$5$MRA$green&adviceanimals$5$AAnimals$blue","color":"red"}}
+	
+	try{
+						var histText = "";
+						var splitOne = text.split("\":{\"");
+						searchList = new Array();
+						for(var countTags = 0;countTags<splitOne.length;countTags++){
+						    var tempUser = splitOne[countTags].split("\"")[splitOne[countTags].split("\"").length-1];
+							if(tempUser == specialName){
+							
+							var splitUno = splitOne[countTags+1].split("\"link\":\"/r/masstagger/")[1].split("\"")[0];
+							
+							//console.log(splitUno);
+							
+							var searches = splitUno.split("\&");
+							
+							for(var countSearches = 1;countSearches<searches.length-1;countSearches++){
+							
+							var search = searches[countSearches].split("$");
+							
+							//console.log(search);
+							
+							var hasIt2 = false;
+							
+							for(countS3 = 0;countS3<searchList.length;countS3++){
+							if(searchList[countS3][0]==search[0]){hasIt2 = true;}
+							}
+							
+							if(!hasIt2){
+							searchList.push(search);
+							
+							}
+							
+							}
+						    
+							}
+						}
+						
+						for(var countS2 = 0;countS2<searchList.length;countS2++){
+						//console.log(searchList[countS2]);
+						
+						var hasIt = false;
+						
+						for(count5 = 0;count5<searchedNow.length;count5++){
+						
+						if(searchedNow[count5]==searchList[countS2][0]){hasIt = true;}
+						
+						}
+						
+						var tick = "";
+						if(hasIt){tick = "&#10003";}
+						
+						histText = histText.concat("<textarea onfocus=\'loadSearch(this.id)\' title = \"Click the TAG to load its info into the search options. A tick mark next to a TAG means you've already searched for it during this session. Special TAGs just like this one are saved in your output with all of your searches and will appear whenever you load your old Tags in the correct field.\"id=\""+ countS2 +"\" readonly=\"readonly\" style=\"overflow:hidden; resize: none;color:" + getColor(searchList[countS2][3]) +";text-align:center; background-color:"+ searchList[countS2][3]+";border-radius: 5px\" rows = \"1\" cols =  \""+searchList[countS2][2].length+"\">"+ searchList[countS2][2] + tick + "</textarea>" );
+						}
+						
+						//console.log(histText);
+						
+						if(histText.length>0){document.getElementById('histDiv').style.display = "block"}else{document.getElementById('histDiv').style.display = "none"}
+						var textarea2 = document.getElementById('histDiv');
+                        textarea2.innerHTML = histText;
+						//document.getElementById("history").scrollTop = document.getElementById("history").scrollHeight-2;
+						
+						
+		}catch(err){}
+	}
+	
+	function getColor(color){
+	
+	//console.log(color);
+	
+	if(color == "white"||color == "none"||color == "undefined"){return "black";}else{return "silver";}
+	
+	}
+	
+	function loadSearch(id){
+	
+	var search = searchList[id];
+	
+	document.getElementById("subreddit").value = search[0];
+    document.getElementById("pagesNumber").value = search[1];
+	document.getElementById("tag").value = search[2];
+	var e = document.getElementsByName('c1');
+	for(var c5 = 0;c5<e.length;c5++){
+	if(e[c5].value == search[3]){e[c5].selected = true;}else{e[c5].selected = false;}}
+	
+	}
+	
+	function generateSpecialTag(text){
+	
+			                
+	
+	      try{
+				var oldTagsText = "";
+				var hasOldTag = false;
+				var searches = "";
+	
+				var splitOne = text.split("\":{\"");
+						
+						for(var countTags = 0;countTags<splitOne.length;countTags++){
+						    var tempUser = splitOne[countTags].split("\"")[splitOne[countTags].split("\"").length-1];
+							if(tempUser == specialName){
+							hasOldTag = true;
+							var splitUno = splitOne[countTags+1].split("\"link\":\"/r/masstagger/")[1].split("\"")[0];
+							
+							//console.log(splitUno);
+							
+							searches = splitUno.split("\&");}
+							
+							
+						}
+
+				if(!hasOldTag){
+				
+				//test tag {"MRTHIST":{"tag":"MRTHIST", "link":"/r/masstagger/mensrights$5$MRA$green&adviceanimals$5$AAnimals$blue","color":"red"}}
+				var pagesNum = document.getElementById("pagesNumber").value;
+				var tagLetters = document.getElementById("tag").value;
+				var subName = document.getElementById("subreddit").value;
+				var tagColour;
+				
+				var e = document.getElementsByName('c1');
+                for(var c5 = 0;c5<e.length;c5++){
+				if(e[c5].selected == true){tagColour = e[c5].value;}}
+				
+				var newTag = "{{\"" + specialName + "\":{\"tag\":\"" + specialName +"\", \"link\":\"/r/masstagger/&" + subName + "$" + pagesNum + "$" + tagLetters + "$" + tagColour + "&\",\"color\":\"red\"},";
+				
+				oldTagsText = newTag + oldTagsText.substring(1, oldTagsText.length);
+				return oldTagsText;
+				}else{
+				
+				//it has a tag does it have the subreddit?
+				
+				            var hasIt = false;
+							for(countS3 = 0;countS3<searchList.length;countS3++){
+							var subName = document.getElementById("subreddit").value;
+							//console.log(searchList[countS3][0] + " " + subName);
+							if(searchList[countS3][0]==subName){
+							
+							//split by subName$
+							var tempFirstSecond = text.split("&" + subName + "$");
+							
+							var pagesNum = document.getElementById("pagesNumber").value;
+							var tagLetters = document.getElementById("tag").value;
+							var subName = document.getElementById("subreddit").value;
+							var tagColour;
+							
+							var e = document.getElementsByName('c1');
+							for(var c5 = 0;c5<e.length;c5++){
+							if(e[c5].selected == true){tagColour = e[c5].value;}}
+							
+							var tempFirst = tempFirstSecond[0];
+							var tempSecond = tempFirstSecond[1].substring(tempFirstSecond[1].split("&")[0].length, tempFirstSecond[1].length);
+							//console.log("tempSecond");
+							//console.log(tempSecond);
+							//console.log(tempFirst + subName + "$" + pagesNum + "$" + tagLetters + "$" + tagColour + tempSecond);
+							
+							return tempFirst + "&" + subName + "$" + pagesNum + "$" + tagLetters + "$" + tagColour + tempSecond;
+							// take the first part the new tag and the second part }
+							}
+							}
+							
+							//does it?
+				
+				var pagesNum = document.getElementById("pagesNumber").value;
+				var tagLetters = document.getElementById("tag").value;
+				var subName = document.getElementById("subreddit").value;
+				var tagColour;
+				
+				var e = document.getElementsByName('c1');
+                for(var c5 = 0;c5<e.length;c5++){
+				if(e[c5].selected == true){tagColour = e[c5].value;}}
+				
+				var newTagShort = subName + "$" + pagesNum + "$" + tagLetters + "$" + tagColour + "&\",\"color\":\"red\"}";
+			    //console.log(newTagShort);
+				
+				var beforeTagIchi = "{{\"" + specialName + "\":{\"tag\":\"" + specialName +"\", \"link\":\"/r/masstagger/";
+				
+				var beforeTagNi = beforeTagIchi.concat(text.split(beforeTagIchi)[1].split("\"")[0]) + newTagShort;
+				
+				
+				var textRest = beforeTagNi + text.split(beforeTagIchi.concat(text.split(beforeTagIchi)[1].split("\"")[0]) + "\",\"color\":\"red\"},");
+				//console.log(textRest);
+				return (textRest);
+				
+				}
+				
+				
+
+			}catch(err){
+			
+			return text;
+			}		
+	
+	
+	
+	
+	}
 
   YUI().use('node', 'event', 'yql', function(Y) {  
   
 		Y.one("#gen_list").on('click',function() { 
 		
+						executed = false;
 						hasUsers = false;
+						usersObj = new Array();
+						subName = document.getElementById("subreddit").value;
 		
-		                URL = "http://www.reddit.com/r/" + document.getElementById("subreddit").value + "/";
+		                URL = "http://www.reddit.com/r/" + subName + "/";
 		                currentURL = URL;
 						phaseTwo = false;
 						countURL = 0;
@@ -164,18 +446,25 @@
 						users = new Array();
 						statusText = "***STATUS***";
 						oldTagsText = document.getElementById('oldTags').value;
+						pagesNum = document.getElementById("pagesNumber").value;
+						tagLetters = document.getElementById("tag").value;
+						minKarma = document.getElementById('minKarma').value;
+						if(document.getElementById('minKarma').value>0){excludeScore = true;}else{excludeScore = false;}
+		                searchedNow.push(subName);
 						
+		
 						//console.log(oldTagsText);
-						
+						try{
 						var splitOne = oldTagsText.split("\":{\"");
 						for(var countTags = 0;countTags<splitOne.length;countTags++){
 						    var tempUser = splitOne[countTags].split("\"")[splitOne[countTags].split("\"").length-1];
 							usersOld.push(tempUser);
 							//console.log(tempUser);
 						}
-						
-			            pagesNum = document.getElementById("pagesNumber").value;
-						tagLetters = document.getElementById("tag").value;
+						}catch(err){
+						//console.log("Error in old tags")
+						}
+			            
 						
 						var e = document.getElementsByName('c1');
                        
@@ -289,20 +578,50 @@
 								              //console.log(stringListEin2[count] + "\n\n\n");
 											  var hasIt = false;
 											  
-													   for(var count2 = 0;count2<users.length;count2++){
+													   
+													   var lastUser = "";
+													   var lastKarma = 0;
+													   var includeKarma = true;
+													   
+													   var karmaTemp = 0;
+														includeKarma = true;
+														
+													     //get carma score
+													     //console.log(stringListEin2[count] );
+														 try {
+														 
+														 var scoreList = stringListEin2[count].split("score likes\",\"content\":\"")[1];
+														 
+														 karmaTemp = parseInt(scoreList.split(" ")[0], 10);
+														 //console.log("Temporary " + karmaTemp);
+														 
+														 if(lastUser!=stringListEin2[count].split("\"")[0]||lastKarma !=karmaTemp){
+														 
+														 //INFO
+														 //console.log("Info about above " + stringListEin2[count].split("\"")[0] + " "+ karmaTemp+ "\n\n\n");
+														 
+														 }else{includeKarma = false;}
+														 lastUser = stringListEin2[count].split("\"")[0];
+														 lastKarma = karmaTemp;
+													     }catch (err) {
+														   // statements to handle any exceptions
+														   //console.log("Score not found");
+														}
+													   
+													   for(var count2 = 0;count2<usersOld.length;count2++){
 													     
 														 
 													     
-														 if(users[count2] == (stringListEin2[count].split("\"")[0])){
+														 if(usersOld[count2] == (stringListEin2[count].split("\"")[0])){
 														  hasIt = true;break;
 													  
 														 }
 													  
 													   }
 													   
-													   for(var count3 = 0;count3<usersOld.length;count3++){
+													   for(var count3 = 0;count3<users.length;count3++){
 													  
-														 if(usersOld[count3] == (stringListEin2[count].split("\"")[0])){
+														 if(users[count3] == (stringListEin2[count].split("\"")[0])){
 														  hasIt = true;break;
 													  
 														 }
@@ -312,58 +631,137 @@
 												   if(!hasIt){
 												   users.push(stringListEin2[count].split("\"")[0]);
 												   hasUsers = true;
+												   var karmaSafe = 0;
+												   if(!isNaN(karmaTemp)){karmaSafe = karmaTemp};
 												   
-												   //console.log(users[users.length-1]);
+												   
+												   usersObj.push(new user(stringListEin2[count].split("\"")[0],karmaSafe));
+												   
+												   
+												   }else{
+												   
+												   for(var countU1 = 0; countU1<usersObj.length;countU1++){
+												   
+													   if(usersObj[countU1].name == stringListEin2[count].split("\"")[0]){
+													   
+															if(includeKarma){if(!isNaN(karmaTemp)){usersObj[countU1].karma +=(karmaTemp);
+															//console.log(usersObj[countU1].name + " including " + karmaTemp)
+															
+															}}
+													   
+													   }
+													   
+												   
+												   }
+												   
 												   }
 								   }
 								  
 							  }else{
 							   
-							  //console.log(users);
-							  
+							 // console.log(users.length + "<length");
 							 
+							 for(var countU2 = 0; countU2<usersObj.length;countU2++){
+							 
+							 //console.log("User " + usersObj[countU2].name + " has " + usersObj[countU2].karma + " karma." )
+							 
+							 }
 							  
-							  var suffix = "\":{\"tag\":\"" + tagLetters + "\", \"link\":\"" + linkData + "\",\"color\":\""
-								+ tagColour + "\"}";
-							  var prefix = "\"";
+									if(!executed){
 							  
-							  if(oldTagsText.length>0){
-							  stories += oldTagsText.substring(0, oldTagsText.length - 1) + ",";
-							  }else{
-							  stories+="{";
-							  }
-							  for(var count3 = 0;count3<users.length;count3++){
+									  var suffix = "\":{\"tag\":\"" + tagLetters + "\", \"link\":\"" + linkData + "\",\"color\":\""
+										+ tagColour + "\"}";
+									  var prefix = "\"";
+									  
+									  if(oldTagsText.length>0){
+									  
+									  oldTagsText = generateSpecialTag(oldTagsText);
+									  
+									  stories += oldTagsText.substring(0, oldTagsText.length - 1) + ",";
+									  
+									  }else{
+									  
+									  var newTag = "{{\"" + specialName + "\":{\"tag\":\"" + specialName +"\", \"link\":\"/r/masstagger/&" + subName + "$" + pagesNum + "$" + tagLetters + "$" + tagColour + "&\",\"color\":\"red\"},";
+									  
+									  stories+= newTag;
+									  }
+									  for(var count3 = 0;count3<users.length;count3++){
+									  
+									  var includeUser = true;
+									  
+									  for(countU3 = 0; countU3<usersObj.length;countU3++){
+									  
+										  if (usersObj[countU3].name == users[count3]){
+											if(usersObj[countU3].karma < minKarma){includeUser = false;}
+										  
+										  }
+									  
+									  }
+									  
+									  
+									  
+									  if(!excludeScore){includeUser = true;}
+									  
+									  var allExcluded = true;
+									  
+									  if(includeUser){
+									  stories+= prefix + users[count3] + suffix + " ";
+									  allExcluded = false;
+									  if(count3<users.length-1){stories+=",";}
+									  }else{
+									  //console.log("User " + users[count3] + " was excluded for insufficient karma.")
+									  }
+									  }
+									  
+									  stories +="}";
+									  
+									  stories += "</textarea>";  
+									  Y.one('#output').replace(stories);  
+									  stories = "";  
+									  
+									  var hasInput = true;
+									  
+									  if (!hasUsers&&oldTagsText.length == 0){
+									  
+									  stories = "<textarea placeholder = \"Results include your old TAGS\" id=\"output\" rows = \"10\" cols =  \"60\" style=\"background-image: url('newTagsBG.png'); background-repeat:no-repeat\">"+ "No new users found.\n\nPlease check if you haven't misspelled the Subreddit Name. \n\nExample: for reddit.com/r/adviceanimals enter adviceanimals \n\nAlternatively the Subreddit you're attempting to search might be Private or behind a \"You must be 18 or over to view this content.\" wall. We're working on resolving this issue."+"</textarea>";  
+									  Y.one('#output').replace(stories);  
+									  stories = "";
+									  hasInput = false;
+									  }
+									  
+									  if (allExcluded){
+									  
+									  stories = "<textarea placeholder = \"Results include your old TAGS\" id=\"output\" rows = \"10\" cols =  \"60\" style=\"background-image: url('newTagsBG.png'); background-repeat:no-repeat\">"+ "No users were found matching the Advanced Options criteria. \n\nYou can reduce the Minimum Karma requirement and try again. \n\nPlease not that Karma is measured only for the Number of Pages you've entered above."+"</textarea>";  
+									  Y.one('#output').replace(stories);  
+									  stories = "";
+									  hasInput = false;
+									  }
+									  
+									  if(hasInput){
+									  
+									  
+									  document.getElementById('notification').style.display = "block";
+									  
+									  }
+									  
+									  executed = true;
 							  
-							  stories+= prefix + users[count3] + suffix + " ";
-							  
-							  if(count3<users.length-1){stories+=",";}
-							  
-							  }
-							  
-							  stories +="}";
-							  
-							  stories += "</textarea>";  
-							  Y.one('#output').replace(stories);  
-							  stories = "";  
-							  
-							  if (!hasUsers){
-							  
-							  stories = "<textarea placeholder = \"Results include your old TAGS\" id=\"output\" rows = \"10\" cols =  \"60\" style=\"background-image: url('newTagsBG.png'); background-repeat:no-repeat\">"+ "Please check if you haven't misspelled the Subreddit Name. \n\nExample: for reddit.com/r/adviceanimals enter adviceanimals \n\nAlternatively the Subreddit you're attempting to search might be Private or behind a \"You must be 18 or over to view this content.\" wall. We're working on resolving this issue."+"</textarea>";  
-							  Y.one('#output').replace(stories);  
-							  stories = "";
-							  
-							  }
+										}
 							  
 							  handel.cancel();
 							  
+							  
+							  }
+							  
+							  
+							  
+							  
+							  }
+							  
 							  }
 							  
 							  
 							  
-							  
-							  }
-							  
-							  }
 							}); 
 							
 						      
@@ -394,5 +792,6 @@
 
 
 </html>
+
 
 
